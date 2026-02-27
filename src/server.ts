@@ -12,28 +12,31 @@ export function createServer(): McpServer {
     version: "1.0.0",
   });
 
-  server.tool(
+  server.registerTool(
     "list_agents",
-    "List all configured AI agents and their status (configured, enabled, default model)",
-    {},
+    {
+      description: "List all configured AI agents and their status (configured, enabled, default model)",
+    },
     async () => {
       const result = listAgents();
       return { content: [{ type: "text", text: result }] };
     }
   );
 
-  server.tool(
+  server.registerTool(
     "add_api_key",
-    "Add or update an API key for an AI provider",
     {
-      provider: z
-        .enum(["openai", "gemini", "kimi", "minimax", "glm"])
-        .describe("The AI provider to configure"),
-      api_key: z.string().describe("The API key for the provider"),
-      model: z
-        .string()
-        .optional()
-        .describe("Optional: override the default model for this provider"),
+      description: "Add or update an API key for an AI provider",
+      inputSchema: {
+        provider: z
+          .enum(["openai", "gemini", "kimi", "minimax", "glm"])
+          .describe("The AI provider to configure"),
+        api_key: z.string().describe("The API key for the provider"),
+        model: z
+          .string()
+          .optional()
+          .describe("Optional: override the default model for this provider"),
+      },
     },
     async (args) => {
       const result = addApiKey(args.provider, args.api_key, args.model);
@@ -41,28 +44,30 @@ export function createServer(): McpServer {
     }
   );
 
-  server.tool(
+  server.registerTool(
     "review_code",
-    'Review code using a specified AI agent. Use agent="all" to get reviews from all configured agents.',
     {
-      code: z.string().describe("The code to review"),
-      agent: z
-        .string()
-        .describe(
-          'Which agent to use: "openai", "gemini", "kimi", "minimax", "glm", or "all" to use all configured agents'
-        ),
-      language: z
-        .string()
-        .optional()
-        .describe("Programming language (e.g., TypeScript, Python, Go)"),
-      context: z
-        .string()
-        .optional()
-        .describe('Additional context about the code (e.g., "This is a React hook")'),
-      focus: z
-        .array(z.enum(["security", "performance", "style", "bugs"]))
-        .optional()
-        .describe("Areas to focus on during review"),
+      description: 'Review code using a specified AI agent. Use agent="all" to get reviews from all configured agents.',
+      inputSchema: {
+        code: z.string().describe("The code to review"),
+        agent: z
+          .string()
+          .describe(
+            'Which agent to use: "openai", "gemini", "kimi", "minimax", "glm", or "all" to use all configured agents'
+          ),
+        language: z
+          .string()
+          .optional()
+          .describe("Programming language (e.g., TypeScript, Python, Go)"),
+        context: z
+          .string()
+          .optional()
+          .describe('Additional context about the code (e.g., "This is a React hook")'),
+        focus: z
+          .array(z.enum(["security", "performance", "style", "bugs"]))
+          .optional()
+          .describe("Areas to focus on during review"),
+      },
     },
     async (args) => {
       const result = await reviewCode({
@@ -76,18 +81,20 @@ export function createServer(): McpServer {
     }
   );
 
-  server.tool(
+  server.registerTool(
     "ask_agent",
-    "Send a message to any configured AI agent and get a response",
     {
-      agent: z
-        .enum(["openai", "gemini", "kimi", "minimax", "glm"])
-        .describe("Which agent to use"),
-      message: z.string().describe("The message to send to the agent"),
-      system_prompt: z
-        .string()
-        .optional()
-        .describe("Optional system prompt to set the agent's behavior"),
+      description: "Send a message to any configured AI agent and get a response",
+      inputSchema: {
+        agent: z
+          .enum(["openai", "gemini", "kimi", "minimax", "glm"])
+          .describe("Which agent to use"),
+        message: z.string().describe("The message to send to the agent"),
+        system_prompt: z
+          .string()
+          .optional()
+          .describe("Optional system prompt to set the agent's behavior"),
+      },
     },
     async (args) => {
       const result = await askAgent({
@@ -99,15 +106,17 @@ export function createServer(): McpServer {
     }
   );
 
-  server.tool(
+  server.registerTool(
     "start_oauth",
-    "Start Google OAuth 2.0 flow for Gemini. Opens browser for authentication and saves tokens.",
     {
-      provider: z
-        .enum(["gemini"])
-        .describe("The provider to authenticate with OAuth (currently only Gemini is supported)"),
-      client_id: z.string().describe("Google OAuth client ID"),
-      client_secret: z.string().describe("Google OAuth client secret"),
+      description: "Start Google OAuth 2.0 flow for Gemini. Opens browser for authentication and saves tokens.",
+      inputSchema: {
+        provider: z
+          .enum(["gemini"])
+          .describe("The provider to authenticate with OAuth (currently only Gemini is supported)"),
+        client_id: z.string().describe("Google OAuth client ID"),
+        client_secret: z.string().describe("Google OAuth client secret"),
+      },
     },
     async (args) => {
       const result = await startOAuth({
