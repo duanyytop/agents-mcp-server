@@ -65,6 +65,89 @@ let default_base_url = if matches!(auth_mode, Some(AuthMode::Chatgpt)) {
 
 **要使用 OpenAI，请在 [platform.openai.com](https://platform.openai.com) 获取 API key 后通过 `add_api_key` 配置。**
 
+## 使用方式
+
+### 查看 agent 状态
+
+```
+use list_agents
+```
+
+### 用单个 agent review 代码
+
+```
+use review_code, agent=gemini, code=<your code>, language=TypeScript
+```
+
+```
+use review_code, agent=openai, code=<your code>, language=Python, focus=security,bugs
+```
+
+### 用所有已配置 agent 对比 review
+
+```
+use review_code, agent=all, code=<your code>, language=Go
+```
+
+### 向 agent 提问
+
+```
+use ask_agent, agent=gemini, message="这段算法的时间复杂度是多少？"
+```
+
+### Prompt 示例
+
+**安全审计：**
+```
+use review_code, agent=gemini, language=TypeScript, focus=security,
+code=`
+async function login(req, res) {
+  const { username, password } = req.body;
+  const user = await db.query(`SELECT * FROM users WHERE username = '${username}'`);
+  if (user && user.password === password) {
+    res.json({ token: jwt.sign({ id: user.id }, 'secret') });
+  }
+}
+`
+```
+
+**多模型对比 review：**
+```
+use review_code, agent=all, language=Rust, focus=performance,
+code=`
+fn find_duplicates(nums: &[i32]) -> Vec<i32> {
+  let mut result = vec![];
+  for i in 0..nums.len() {
+    for j in i+1..nums.len() {
+      if nums[i] == nums[j] && !result.contains(&nums[i]) {
+        result.push(nums[i]);
+      }
+    }
+  }
+  result
+}
+`
+```
+
+**带上下文的 review：**
+```
+use review_code, agent=kimi, language=TypeScript, context="这是一个在高频重渲染场景下使用的 React 自定义 Hook", focus=performance,
+code=`
+function useUserData(userId: string) {
+  const [data, setData] = useState(null);
+  useEffect(() => {
+    fetch(`/api/users/${userId}`).then(r => r.json()).then(setData);
+  });
+  return data;
+}
+`
+```
+
+**询问设计决策：**
+```
+use ask_agent, agent=gemini, message="电商购物车场景下，应该用乐观更新还是悲观更新？各自的 tradeoff 是什么？"
+```
+
 ## 可用工具
 
 ### `list_agents`
@@ -140,22 +223,6 @@ use add_api_key, provider=kimi, api_key=sk-xxx, model=moonshot-v1-8k
 ```
 
 然后修改 `src/providers/registry.ts` 中的 base URL 并重新构建。
-
-## 在 Claude Code 中使用
-
-```
-# 用单个 agent review 代码
-use review_code, agent=gemini, code=<your code>, language=TypeScript
-
-# 用所有已配置 agent 对比 review
-use review_code, agent=all, code=<your code>
-
-# 问问题
-use ask_agent, agent=gemini, message="解释一下这个算法..."
-
-# 查看哪些 agent 已就绪
-use list_agents
-```
 
 ## 调试
 

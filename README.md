@@ -65,6 +65,89 @@ In other words, the Codex CLI OAuth token is **not** a regular OpenAI API token 
 
 **To use OpenAI with this server, add an API key from [platform.openai.com](https://platform.openai.com).**
 
+## Usage
+
+### Check agent status
+
+```
+use list_agents
+```
+
+### Review code with a single agent
+
+```
+use review_code, agent=gemini, code=<your code>, language=TypeScript
+```
+
+```
+use review_code, agent=openai, code=<your code>, language=Python, focus=security,bugs
+```
+
+### Get reviews from all configured agents
+
+```
+use review_code, agent=all, code=<your code>, language=Go
+```
+
+### Ask an agent a question
+
+```
+use ask_agent, agent=gemini, message="What's the time complexity of this algorithm?"
+```
+
+### Prompt examples
+
+**Security audit:**
+```
+use review_code, agent=gemini, language=TypeScript, focus=security,
+code=`
+async function login(req, res) {
+  const { username, password } = req.body;
+  const user = await db.query(`SELECT * FROM users WHERE username = '${username}'`);
+  if (user && user.password === password) {
+    res.json({ token: jwt.sign({ id: user.id }, 'secret') });
+  }
+}
+`
+```
+
+**Compare opinions from multiple models:**
+```
+use review_code, agent=all, language=Rust, focus=performance,
+code=`
+fn find_duplicates(nums: &[i32]) -> Vec<i32> {
+  let mut result = vec![];
+  for i in 0..nums.len() {
+    for j in i+1..nums.len() {
+      if nums[i] == nums[j] && !result.contains(&nums[i]) {
+        result.push(nums[i]);
+      }
+    }
+  }
+  result
+}
+`
+```
+
+**Review with context:**
+```
+use review_code, agent=kimi, language=TypeScript, context="This is a React custom hook used in a high-frequency re-render scenario", focus=performance,
+code=`
+function useUserData(userId: string) {
+  const [data, setData] = useState(null);
+  useEffect(() => {
+    fetch(`/api/users/${userId}`).then(r => r.json()).then(setData);
+  });
+  return data;
+}
+`
+```
+
+**Ask about design decisions:**
+```
+use ask_agent, agent=gemini, message="Should I use optimistic updates or pessimistic updates for a shopping cart in an e-commerce app? What are the tradeoffs?"
+```
+
 ## Available Tools
 
 ### `list_agents`
@@ -142,22 +225,6 @@ use add_api_key, provider=kimi, api_key=sk-xxx, model=moonshot-v1-8k
 ```
 
 Then update the base URL in `src/providers/registry.ts` and rebuild.
-
-## Usage in Claude Code
-
-```
-# Review code with one agent
-use review_code, agent=gemini, code=<your code>, language=TypeScript
-
-# Compare reviews from all agents
-use review_code, agent=all, code=<your code>
-
-# Ask a question
-use ask_agent, agent=gemini, message="Explain this algorithm..."
-
-# Check which agents are ready
-use list_agents
-```
 
 ## Testing
 
