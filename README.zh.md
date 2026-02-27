@@ -117,6 +117,12 @@ let default_base_url = if matches!(auth_mode, Some(AuthMode::Chatgpt)) {
 **询问设计决策：**
 > 问一下 Gemini：电商购物车场景下，乐观更新和悲观更新各有什么 tradeoff？
 
+### 演示
+
+![查看 agent 列表并触发 review](./images/agents-mcp.jpg)
+
+![Gemini 和 Kimi 的 review 结果](./images/review-code.jpg)
+
 ## 可用工具
 
 ### `list_agents`

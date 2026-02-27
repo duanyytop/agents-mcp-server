@@ -117,6 +117,12 @@ Once the server is added to Claude Code, just describe what you want in natural 
 **Ask a design question:**
 > Ask Gemini: in an e-commerce cart, should I use optimistic or pessimistic updates? What are the tradeoffs?
 
+### Demo
+
+![List agents and trigger review](./images/agents-mcp.jpg)
+
+![Review results from Gemini and Kimi](./images/review-code.jpg)
+
 ## Available Tools
 
 ### `list_agents`
