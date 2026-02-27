@@ -102,9 +102,47 @@ client_secret: string
 |----------|----|---------------|----------|
 | OpenAI | `openai` | gpt-5.2 | Codex CLI |
 | Google Gemini | `gemini` | gemini-3.1-pro-preview | Gemini CLI |
-| Kimi (Moonshot) | `kimi` | kimi-k2.5 | — |
+| Kimi (Moonshot) | `kimi` | kimi-for-coding | — |
 | MiniMax | `minimax` | MiniMax-M2.5 | — |
 | GLM (Zhipu AI) | `glm` | glm-5 | — |
+
+### Kimi (Moonshot) — Important Notes
+
+Kimi exposes two separate APIs with different endpoints, models, and access policies. Using the wrong one will result in authentication or access errors.
+
+#### Kimi Coding API (used by this server)
+
+This server uses the **Kimi Coding API**, which is a dedicated endpoint for AI coding agents.
+
+| Field | Value |
+|-------|-------|
+| Base URL | `https://api.kimi.com/coding/v1` |
+| Model | `kimi-for-coding` |
+| Context window | 262,144 tokens |
+| Max output tokens | 32,768 |
+
+**How to get an API key:**
+
+1. Go to [kimi.com/code/console](https://www.kimi.com/code/console) — this is **not** the regular Moonshot platform
+2. Subscribe to a Kimi Code plan (required for API access)
+3. Generate an API key — the key format is `sk-kimi-...`
+
+**Access restriction:** The Kimi Coding API only accepts requests from recognized coding agents (Kimi CLI, Claude Code, Roo Code, Kilo Code, etc.). This server automatically sends `User-Agent: claude-code/1.0.0` with every request to satisfy this requirement. If you call the endpoint directly (e.g., with curl or a generic OpenAI client) without this header, you will receive a `403 access_terminated_error`.
+
+**Common mistakes:**
+- ❌ Using `https://api.moonshot.ai/v1` — this is the general Moonshot API, not the coding endpoint
+- ❌ Using model `kimi-k2.5` or `moonshot-v1-*` — those are general Moonshot models, not available on the coding endpoint
+- ❌ Getting an API key from [platform.moonshot.cn](https://platform.moonshot.cn) — that's for the general API
+
+#### General Moonshot API (not used by this server)
+
+If you want to use Kimi's general-purpose models (`moonshot-v1-8k`, `kimi-k2.5`, etc.), those are available at `https://api.moonshot.ai/v1` with keys from [platform.moonshot.cn](https://platform.moonshot.cn). To use those instead, override the model when adding the key:
+
+```
+use add_api_key, provider=kimi, api_key=sk-xxx, model=moonshot-v1-8k
+```
+
+Then update the base URL in `src/providers/registry.ts` and rebuild.
 
 ## Usage in Claude Code
 
