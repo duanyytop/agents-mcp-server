@@ -6,7 +6,7 @@ export const PROVIDER_REGISTRY: Record<string, ProviderInfo> = {
     name: "OpenAI",
     type: "openai-compatible",
     baseURL: "https://api.openai.com/v1",
-    defaultModel: "gpt-4.1",
+    defaultModel: "gpt-5.2",
     supportsOAuth: false,
   },
   gemini: {
@@ -21,7 +21,7 @@ export const PROVIDER_REGISTRY: Record<string, ProviderInfo> = {
     name: "Kimi (Moonshot)",
     type: "openai-compatible",
     baseURL: "https://api.moonshot.ai/v1",
-    defaultModel: "kimi-k2-thinking-turbo",
+    defaultModel: "kimi-k2.5",
     supportsOAuth: false,
   },
   minimax: {
@@ -37,7 +37,7 @@ export const PROVIDER_REGISTRY: Record<string, ProviderInfo> = {
     name: "GLM (Zhipu AI)",
     type: "openai-compatible",
     baseURL: "https://open.bigmodel.cn/api/paas/v4",
-    defaultModel: "glm-4.7",
+    defaultModel: "glm-5",
     supportsOAuth: false,
   },
 };

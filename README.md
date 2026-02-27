@@ -59,11 +59,11 @@ client_secret: string
 
 | Provider | ID | Default Model |
 |----------|----|---------------|
-| OpenAI | `openai` | gpt-4.1 |
+| OpenAI | `openai` | gpt-5.2 |
 | Google Gemini | `gemini` | gemini-2.5-flash |
-| Kimi (Moonshot) | `kimi` | kimi-k2-thinking-turbo |
+| Kimi (Moonshot) | `kimi` | kimi-k2.5 |
 | MiniMax | `minimax` | MiniMax-M2.5 |
-| GLM (Zhipu AI) | `glm` | glm-4.7 |
+| GLM (Zhipu AI) | `glm` | glm-5 |
 
 ## Usage in Claude Code
 
