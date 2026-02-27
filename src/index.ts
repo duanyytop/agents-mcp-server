@@ -6,7 +6,7 @@ async function main() {
   const server = createServer();
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  process.stderr.write("agents-mcp-server started\n");
+  process.stderr.write("agents-review-mcp started\n");
 }
 
 main().catch((err) => {

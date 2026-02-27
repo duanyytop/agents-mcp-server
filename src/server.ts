@@ -8,7 +8,7 @@ import { startOAuth } from "./tools/start-oauth.js";
 
 export function createServer(): McpServer {
   const server = new McpServer({
-    name: "agents-mcp-server",
+    name: "agents-review-mcp",
     version: "1.0.0",
   });
 
