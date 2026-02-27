@@ -17,11 +17,9 @@ claude mcp add agents-mcp-server -s user -- node /path/to/agents-mcp-server/dist
 
 ## Authentication
 
-There are two ways to authenticate a provider: API key or CLI token reuse.
-
 ### Option A: API Key
 
-The simplest approach for Kimi, MiniMax, and GLM. Also works for OpenAI and Gemini.
+The simplest approach for all providers except Gemini.
 
 ```
 use add_api_key, provider=openai, api_key=sk-xxx
@@ -29,36 +27,41 @@ use add_api_key, provider=openai, api_key=sk-xxx
 
 Keys are stored in `~/.config/agents-mcp-server/config.json`.
 
-### Option B: Reuse Gemini CLI Auth (recommended for Gemini)
+### Option B: Reuse Gemini CLI Auth (Gemini only)
 
 If you already use [Gemini CLI](https://github.com/google-gemini/gemini-cli), no extra setup is needed.
 
-**Why this works:** Gemini CLI stores Google OAuth tokens in `~/.gemini/oauth_creds.json`. This server reads those tokens directly and uses them as Bearer auth when calling the Gemini API — the same way the CLI itself does. No API key, no OAuth flow, no Google Cloud project required.
+**Why this works:** Gemini CLI stores Google OAuth tokens in `~/.gemini/oauth_creds.json`. This server reads those tokens directly and uses them as Bearer auth when calling the Gemini Code Assist API — the same way the CLI itself does. No API key, no OAuth flow, no Google Cloud project required.
 
 **Token expiry is handled automatically:**
 - Tokens are refreshed 5 minutes before expiry using the same OAuth client credentials embedded in the Gemini CLI
 - The refreshed token is written back to `~/.gemini/oauth_creds.json`, so the CLI also benefits
-- If you keep Gemini CLI running, it refreshes tokens on its own — this server will always read the latest
 
 **Setup:** Just run `gemini` at least once to authenticate, then this server detects the credentials automatically. Run `list_agents` to confirm `✓ Enabled (Gemini CLI)`.
 
-### Option C: Reuse Codex CLI Auth (recommended for OpenAI)
+### Why Codex CLI Auth Does Not Work
 
-If you already use [Codex CLI](https://github.com/openai/codex), no API key is needed.
+You might expect to reuse [Codex CLI](https://github.com/openai/codex) tokens the same way — but it doesn't work, for a fundamental reason.
 
-**Why this works:** Codex CLI uses OpenAI's OAuth flow and stores a JWT access token in `~/.codex/auth.json`. OpenAI's API accepts this JWT as a standard Bearer token — the same `Authorization: Bearer <token>` that a regular API key uses. This server reads the token from Codex CLI's auth file and passes it directly to the OpenAI SDK.
+Gemini CLI calls a standard HTTPS API (`cloudcode-pa.googleapis.com`) that accepts OAuth Bearer tokens. **Codex CLI does not.** When authenticated via ChatGPT OAuth, Codex CLI routes requests to `chatgpt.com/backend-api/codex` — an internal ChatGPT backend that:
 
-**Token expiry is handled automatically:**
-- JWT expiry is parsed from the token's `exp` claim
-- Tokens are refreshed 5 minutes before expiry using Codex CLI's OAuth client and the stored refresh token
-- The refreshed token is written back to `~/.codex/auth.json`, so the CLI also benefits
-- If you keep Codex CLI running, it refreshes tokens on its own — this server will always read the latest
+- Is protected by Cloudflare bot detection (blocks curl/fetch, requires browser-like TLS fingerprint)
+- Uses the OpenAI Responses API wire format, not Chat Completions
+- Draws from ChatGPT subscription quota, completely separate from OpenAI API billing
 
-**Setup:** Just run `codex` at least once to authenticate, then this server detects the credentials automatically. Run `list_agents` to confirm `✓ Enabled (Codex CLI)`.
+The Codex CLI binary has a hardcoded special case for this:
 
-### Priority
+```rust
+let default_base_url = if matches!(auth_mode, Some(AuthMode::Chatgpt)) {
+    "https://chatgpt.com/backend-api/codex"   // ChatGPT OAuth path
+} else {
+    "https://api.openai.com/v1"               // API key path
+};
+```
 
-When both a manual API key and CLI auth are available, the manually configured API key takes precedence.
+In other words, the Codex CLI OAuth token is **not** a regular OpenAI API token — it only works with a private backend designed for the Codex binary. There is no way to reuse it in a standard HTTP client.
+
+**To use OpenAI with this server, add an API key from [platform.openai.com](https://platform.openai.com).**
 
 ## Available Tools
 
@@ -67,10 +70,12 @@ List all configured AI agents and their status.
 
 ### `add_api_key`
 ```
-provider: openai | gemini | kimi | minimax | glm
+provider: openai | kimi | minimax | glm
 api_key: string
 model?: string   # optional, overrides default model
 ```
+
+Note: Gemini does not support API key auth. Use Gemini CLI instead.
 
 ### `review_code`
 ```
@@ -88,23 +93,15 @@ message: string
 system_prompt?: string
 ```
 
-### `start_oauth`
-Start Google OAuth 2.0 flow for Gemini (opens browser). Only needed if you don't use Gemini CLI.
-```
-provider: gemini
-client_id: string
-client_secret: string
-```
-
 ## Supported Providers
 
-| Provider | ID | Default Model | CLI Auth |
-|----------|----|---------------|----------|
-| OpenAI | `openai` | gpt-5.2 | Codex CLI |
-| Google Gemini | `gemini` | gemini-3.1-pro-preview | Gemini CLI |
-| Kimi (Moonshot) | `kimi` | kimi-for-coding | — |
-| MiniMax | `minimax` | MiniMax-M2.5 | — |
-| GLM (Zhipu AI) | `glm` | glm-5 | — |
+| Provider | ID | Default Model | Auth |
+|----------|----|---------------|------|
+| OpenAI | `openai` | gpt-5.2 | API key |
+| Google Gemini | `gemini` | gemini-3.1-pro-preview | Gemini CLI OAuth |
+| Kimi (Moonshot) | `kimi` | kimi-for-coding | API key |
+| MiniMax | `minimax` | MiniMax-M2.5 | API key |
+| GLM (Zhipu AI) | `glm` | glm-5 | API key |
 
 ### Kimi (Moonshot) — Important Notes
 
@@ -148,7 +145,7 @@ Then update the base URL in `src/providers/registry.ts` and rebuild.
 
 ```
 # Review code with one agent
-use review_code, agent=openai, code=<your code>, language=TypeScript
+use review_code, agent=gemini, code=<your code>, language=TypeScript
 
 # Compare reviews from all agents
 use review_code, agent=all, code=<your code>
@@ -171,7 +168,4 @@ cat ~/.config/agents-mcp-server/config.json
 
 # Check Gemini CLI tokens
 cat ~/.gemini/oauth_creds.json
-
-# Check Codex CLI tokens
-cat ~/.codex/auth.json
 ```

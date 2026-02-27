@@ -2,12 +2,7 @@ import { getProviderConfig, updateProviderConfig } from "../config/store.js";
 import { getProviderInfo } from "../providers/registry.js";
 import { OpenAICompatibleProvider } from "../providers/openai-compatible.js";
 import { GeminiProvider } from "../providers/gemini.js";
-import {
-  getGeminiCliToken,
-  hasGeminiCliAuth,
-  getCodexCliToken,
-  hasCodexCliAuth,
-} from "./cli-tokens.js";
+import { getGeminiCliToken, hasGeminiCliAuth } from "./cli-tokens.js";
 import type { Provider } from "../providers/types.js";
 
 export function saveApiKey(provider: string, apiKey: string, model?: string): void {
@@ -41,10 +36,6 @@ export function createProvider(providerName: string): Provider {
 
   if (config?.apiKey) {
     return new OpenAICompatibleProvider(config.apiKey, info.baseURL, info.defaultHeaders);
-  }
-
-  if (providerName === "openai" && hasCodexCliAuth()) {
-    return new OpenAICompatibleProvider(getCodexCliToken, info.baseURL, info.defaultHeaders);
   }
 
   throw new Error(
