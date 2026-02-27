@@ -13,7 +13,7 @@ export const PROVIDER_REGISTRY: Record<string, ProviderInfo> = {
     id: "gemini",
     name: "Google Gemini",
     type: "gemini",
-    defaultModel: "gemini-2.5-flash",
+    defaultModel: "gemini-3.1-pro-preview",
     supportsOAuth: true,
   },
   kimi: {

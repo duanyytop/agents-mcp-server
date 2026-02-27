@@ -60,7 +60,7 @@ client_secret: string
 | Provider | ID | Default Model |
 |----------|----|---------------|
 | OpenAI | `openai` | gpt-5.2 |
-| Google Gemini | `gemini` | gemini-2.5-flash |
+| Google Gemini | `gemini` | gemini-3.1-pro-preview |
 | Kimi (Moonshot) | `kimi` | kimi-k2.5 |
 | MiniMax | `minimax` | MiniMax-M2.5 |
 | GLM (Zhipu AI) | `glm` | glm-5 |
