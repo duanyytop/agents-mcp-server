@@ -21,13 +21,40 @@ claude mcp add agents-mcp-server -s user -- node /path/to/agents-mcp-server/dist
 
 ### Option A: API Key
 
-The simplest approach for all providers except Gemini.
+For all providers except Gemini. There are two ways to set this up.
 
-```
-use add_api_key, provider=openai, api_key=sk-xxx
+**Via Claude Code (recommended)** — just ask in natural language:
+> Add my OpenAI API key: sk-xxx
+
+> Set my Kimi API key to sk-kimi-xxx
+
+> Update the GLM API key to xxx and use model glm-4
+
+Claude will call `add_api_key` automatically. The key is saved to `~/.config/agents-mcp-server/config.json`.
+
+**Via config.json directly** — edit `~/.config/agents-mcp-server/config.json` (create it if it doesn't exist):
+
+```json
+{
+  "providers": {
+    "openai": {
+      "apiKey": "sk-xxx",
+      "enabled": true
+    },
+    "kimi": {
+      "apiKey": "sk-kimi-xxx",
+      "enabled": true
+    },
+    "minimax": {
+      "apiKey": "xxx",
+      "enabled": true,
+      "model": "MiniMax-M2.5"
+    }
+  }
+}
 ```
 
-Keys are stored in `~/.config/agents-mcp-server/config.json`.
+The `model` field is optional — omit it to use the provider's default model.
 
 ### Option B: Reuse Gemini CLI Auth (Gemini only)
 

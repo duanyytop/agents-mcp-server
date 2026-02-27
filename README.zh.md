@@ -21,13 +21,40 @@ claude mcp add agents-mcp-server -s user -- node /path/to/agents-mcp-server/dist
 
 ### 方式 A：API Key
 
-适用于 OpenAI、Kimi、MiniMax、GLM 等所有非 Gemini 的 provider。
+适用于 OpenAI、Kimi、MiniMax、GLM 等所有非 Gemini 的 provider，有两种配置方式。
 
-```
-use add_api_key, provider=openai, api_key=sk-xxx
+**在 Claude Code 中直接说（推荐）** — 用自然语言描述即可：
+> 帮我配置 OpenAI 的 API key：sk-xxx
+
+> 把 Kimi 的 API key 设置为 sk-kimi-xxx
+
+> 更新 GLM 的 API key 为 xxx，模型用 glm-4
+
+Claude 会自动调用 `add_api_key`，key 保存至 `~/.config/agents-mcp-server/config.json`。
+
+**直接编辑 config.json** — 打开 `~/.config/agents-mcp-server/config.json`（不存在则新建）：
+
+```json
+{
+  "providers": {
+    "openai": {
+      "apiKey": "sk-xxx",
+      "enabled": true
+    },
+    "kimi": {
+      "apiKey": "sk-kimi-xxx",
+      "enabled": true
+    },
+    "minimax": {
+      "apiKey": "xxx",
+      "enabled": true,
+      "model": "MiniMax-M2.5"
+    }
+  }
+}
 ```
 
-Key 存储在 `~/.config/agents-mcp-server/config.json`。
+`model` 字段可选，不填则使用该 provider 的默认模型。
 
 ### 方式 B：复用 Gemini CLI 认证（仅 Gemini）
 
