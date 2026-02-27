@@ -1,0 +1,30 @@
+{
+  "name": "agents-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for calling multiple LLMs (OpenAI, Gemini, Kimi, MiniMax, GLM) for code review",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "agents-mcp-server": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@google/genai": "^1.43.0",
+    "@modelcontextprotocol/sdk": "^1.27.1",
+    "open": "^10.1.0",
+    "openai": "^4.77.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
