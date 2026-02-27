@@ -29,8 +29,8 @@ export function createServer(): McpServer {
       description: "Add or update an API key for an AI provider",
       inputSchema: {
         provider: z
-          .enum(["openai", "gemini", "kimi", "minimax", "glm"])
-          .describe("The AI provider to configure"),
+          .enum(["openai", "kimi", "minimax", "glm"])
+          .describe("The AI provider to configure (Gemini uses CLI OAuth, not API key)"),
         api_key: z.string().describe("The API key for the provider"),
         model: z
           .string()

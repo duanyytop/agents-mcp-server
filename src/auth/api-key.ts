@@ -31,14 +31,11 @@ export function createProvider(providerName: string): Provider {
   const config = getProviderConfig(providerName);
 
   if (info.type === "gemini") {
-    if (config?.apiKey) {
-      return new GeminiProvider({ type: "apiKey", apiKey: config.apiKey });
-    }
     if (hasGeminiCliAuth()) {
-      return new GeminiProvider({ type: "oauth", getToken: getGeminiCliToken });
+      return new GeminiProvider(getGeminiCliToken);
     }
     throw new Error(
-      `No credentials for Gemini. Use add_api_key to set an API key, or run \`gemini\` to authenticate via Gemini CLI.`
+      `Gemini only supports Gemini CLI authentication. Run \`gemini\` to authenticate first.`
     );
   }
 
