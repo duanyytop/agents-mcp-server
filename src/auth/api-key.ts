@@ -43,11 +43,11 @@ export function createProvider(providerName: string): Provider {
   }
 
   if (config?.apiKey) {
-    return new OpenAICompatibleProvider(config.apiKey, info.baseURL);
+    return new OpenAICompatibleProvider(config.apiKey, info.baseURL, info.defaultHeaders);
   }
 
   if (providerName === "openai" && hasCodexCliAuth()) {
-    return new OpenAICompatibleProvider(getCodexCliToken, info.baseURL);
+    return new OpenAICompatibleProvider(getCodexCliToken, info.baseURL, info.defaultHeaders);
   }
 
   throw new Error(

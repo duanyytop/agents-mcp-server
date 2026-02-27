@@ -7,6 +7,7 @@ export interface ProviderInfo {
   baseURL?: string;
   defaultModel: string;
   supportsOAuth: boolean;
+  defaultHeaders?: Record<string, string>;
 }
 
 export interface ChatMessage {

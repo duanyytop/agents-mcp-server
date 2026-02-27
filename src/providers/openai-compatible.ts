@@ -6,10 +6,13 @@ export class OpenAICompatibleProvider implements Provider {
   private getToken?: () => Promise<string>;
   private baseURL?: string;
 
-  constructor(credentials: string | (() => Promise<string>), baseURL?: string) {
+  private defaultHeaders?: Record<string, string>;
+
+  constructor(credentials: string | (() => Promise<string>), baseURL?: string, defaultHeaders?: Record<string, string>) {
     this.baseURL = baseURL;
+    this.defaultHeaders = defaultHeaders;
     if (typeof credentials === "string") {
-      this.staticClient = new OpenAI({ apiKey: credentials, baseURL });
+      this.staticClient = new OpenAI({ apiKey: credentials, baseURL, defaultHeaders });
     } else {
       this.getToken = credentials;
     }
@@ -21,7 +24,7 @@ export class OpenAICompatibleProvider implements Provider {
       client = this.staticClient;
     } else {
       const token = await this.getToken!();
-      client = new OpenAI({ apiKey: token, baseURL: this.baseURL });
+      client = new OpenAI({ apiKey: token, baseURL: this.baseURL, defaultHeaders: this.defaultHeaders });
     }
 
     const response = await client.chat.completions.create({

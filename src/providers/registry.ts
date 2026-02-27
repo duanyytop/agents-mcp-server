@@ -20,9 +20,10 @@ export const PROVIDER_REGISTRY: Record<string, ProviderInfo> = {
     id: "kimi",
     name: "Kimi (Moonshot)",
     type: "openai-compatible",
-    baseURL: "https://api.moonshot.ai/v1",
-    defaultModel: "kimi-k2.5",
+    baseURL: "https://api.kimi.com/coding/v1",
+    defaultModel: "kimi-for-coding",
     supportsOAuth: false,
+    defaultHeaders: { "User-Agent": "claude-code/1.0.0" },
   },
   minimax: {
     id: "minimax",
