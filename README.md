@@ -2,6 +2,8 @@
 
 MCP server that lets Claude Code call multiple LLMs (OpenAI, Google Gemini, Kimi, MiniMax, GLM) for code review and general queries.
 
+[中文文档](./README.zh.md)
+
 ## Installation
 
 ```bash
