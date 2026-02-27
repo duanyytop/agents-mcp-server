@@ -67,86 +67,28 @@ let default_base_url = if matches!(auth_mode, Some(AuthMode::Chatgpt)) {
 
 ## 使用方式
 
-### 查看 agent 状态
+将 server 添加到 Claude Code 后，直接用自然语言描述需求即可，Claude 会自动调用对应工具。
 
-```
-use list_agents
-```
+**查看哪些 agent 已就绪：**
+> 现在有哪些 AI agent 可以用？
 
-### 用单个 agent review 代码
+**用 Gemini review 当前文件：**
+> 用 Gemini review 这个文件，重点找 bug 和安全问题。
 
-```
-use review_code, agent=gemini, code=<your code>, language=TypeScript
-```
+**让另一个模型提供第二意见：**
+> 让 Kimi 也 review 一下这段代码，和 Gemini 的反馈对比一下。
 
-```
-use review_code, agent=openai, code=<your code>, language=Python, focus=security,bugs
-```
+**所有 agent 同时 review：**
+> 让所有已配置的 agent 一起 review 这个 TypeScript 文件，总结共同发现的问题。
 
-### 用所有已配置 agent 对比 review
+**专项安全审计：**
+> 用 Gemini 对这个文件里的登录逻辑做安全审计，重点检查 SQL 注入、硬编码密钥和 JWT 使用是否规范。
 
-```
-use review_code, agent=all, code=<your code>, language=Go
-```
-
-### 向 agent 提问
-
-```
-use ask_agent, agent=gemini, message="这段算法的时间复杂度是多少？"
-```
-
-### Prompt 示例
-
-**安全审计：**
-```
-use review_code, agent=gemini, language=TypeScript, focus=security,
-code=`
-async function login(req, res) {
-  const { username, password } = req.body;
-  const user = await db.query(`SELECT * FROM users WHERE username = '${username}'`);
-  if (user && user.password === password) {
-    res.json({ token: jwt.sign({ id: user.id }, 'secret') });
-  }
-}
-`
-```
-
-**多模型对比 review：**
-```
-use review_code, agent=all, language=Rust, focus=performance,
-code=`
-fn find_duplicates(nums: &[i32]) -> Vec<i32> {
-  let mut result = vec![];
-  for i in 0..nums.len() {
-    for j in i+1..nums.len() {
-      if nums[i] == nums[j] && !result.contains(&nums[i]) {
-        result.push(nums[i]);
-      }
-    }
-  }
-  result
-}
-`
-```
-
-**带上下文的 review：**
-```
-use review_code, agent=kimi, language=TypeScript, context="这是一个在高频重渲染场景下使用的 React 自定义 Hook", focus=performance,
-code=`
-function useUserData(userId: string) {
-  const [data, setData] = useState(null);
-  useEffect(() => {
-    fetch(`/api/users/${userId}`).then(r => r.json()).then(setData);
-  });
-  return data;
-}
-`
-```
+**带上下文的性能 review：**
+> 这个 Hook 在每次按键时都会执行，让 Gemini 专门 review 有没有不必要的重渲染和遗漏的依赖项。
 
 **询问设计决策：**
-```
-use ask_agent, agent=gemini, message="电商购物车场景下，应该用乐观更新还是悲观更新？各自的 tradeoff 是什么？"
-```
+> 问一下 Gemini：电商购物车场景下，乐观更新和悲观更新各有什么 tradeoff？
 
 ## 可用工具
 

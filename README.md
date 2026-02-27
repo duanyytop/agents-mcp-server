@@ -67,86 +67,28 @@ In other words, the Codex CLI OAuth token is **not** a regular OpenAI API token 
 
 ## Usage
 
-### Check agent status
+Once the server is added to Claude Code, just describe what you want in natural language. Claude will call the appropriate tool automatically.
 
-```
-use list_agents
-```
+**Check which agents are available:**
+> Which AI agents are configured and ready to use?
 
-### Review code with a single agent
+**Review the current file with Gemini:**
+> Use Gemini to review this file for bugs and security issues.
 
-```
-use review_code, agent=gemini, code=<your code>, language=TypeScript
-```
+**Get a second opinion from another model:**
+> Ask Kimi to review the same code and compare with Gemini's feedback.
 
-```
-use review_code, agent=openai, code=<your code>, language=Python, focus=security,bugs
-```
+**Review all agents at once:**
+> Have all configured agents review this TypeScript file and summarize the common issues.
 
-### Get reviews from all configured agents
+**Focused security audit:**
+> Use Gemini to do a security-focused review of the authentication logic in this file. Look for SQL injection, hardcoded secrets, and improper JWT usage.
 
-```
-use review_code, agent=all, code=<your code>, language=Go
-```
+**Performance review with context:**
+> This is a React hook that runs on every keystroke. Ask Gemini to review it specifically for unnecessary re-renders and missing dependencies.
 
-### Ask an agent a question
-
-```
-use ask_agent, agent=gemini, message="What's the time complexity of this algorithm?"
-```
-
-### Prompt examples
-
-**Security audit:**
-```
-use review_code, agent=gemini, language=TypeScript, focus=security,
-code=`
-async function login(req, res) {
-  const { username, password } = req.body;
-  const user = await db.query(`SELECT * FROM users WHERE username = '${username}'`);
-  if (user && user.password === password) {
-    res.json({ token: jwt.sign({ id: user.id }, 'secret') });
-  }
-}
-`
-```
-
-**Compare opinions from multiple models:**
-```
-use review_code, agent=all, language=Rust, focus=performance,
-code=`
-fn find_duplicates(nums: &[i32]) -> Vec<i32> {
-  let mut result = vec![];
-  for i in 0..nums.len() {
-    for j in i+1..nums.len() {
-      if nums[i] == nums[j] && !result.contains(&nums[i]) {
-        result.push(nums[i]);
-      }
-    }
-  }
-  result
-}
-`
-```
-
-**Review with context:**
-```
-use review_code, agent=kimi, language=TypeScript, context="This is a React custom hook used in a high-frequency re-render scenario", focus=performance,
-code=`
-function useUserData(userId: string) {
-  const [data, setData] = useState(null);
-  useEffect(() => {
-    fetch(`/api/users/${userId}`).then(r => r.json()).then(setData);
-  });
-  return data;
-}
-`
-```
-
-**Ask about design decisions:**
-```
-use ask_agent, agent=gemini, message="Should I use optimistic updates or pessimistic updates for a shopping cart in an e-commerce app? What are the tradeoffs?"
-```
+**Ask a design question:**
+> Ask Gemini: in an e-commerce cart, should I use optimistic or pessimistic updates? What are the tradeoffs?
 
 ## Available Tools
 
