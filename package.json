@@ -1,11 +1,11 @@
 {
-  "name": "agents-mcp-server",
+  "name": "agents-review-mcp",
   "version": "1.0.0",
   "description": "MCP server for calling multiple LLMs (OpenAI, Gemini, Kimi, MiniMax, GLM) for code review",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "agents-mcp-server": "dist/index.js"
+    "agents-review-mcp": "dist/index.js"
   },
   "scripts": {
     "build": "tsc",

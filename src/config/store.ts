@@ -3,7 +3,7 @@ import { join } from "path";
 import { homedir } from "os";
 import type { Config, ProviderConfig } from "./types.js";
 
-const CONFIG_DIR = join(homedir(), ".config", "agents-mcp-server");
+const CONFIG_DIR = join(homedir(), ".config", "agents-review-mcp");
 const CONFIG_FILE = join(CONFIG_DIR, "config.json");
 
 function ensureConfigDir(): void {
