@@ -2,14 +2,29 @@ import OpenAI from "openai";
 import type { Provider, ChatOptions } from "./types.js";
 
 export class OpenAICompatibleProvider implements Provider {
-  private client: OpenAI;
+  private staticClient?: OpenAI;
+  private getToken?: () => Promise<string>;
+  private baseURL?: string;
 
-  constructor(apiKey: string, baseURL?: string) {
-    this.client = new OpenAI({ apiKey, baseURL });
+  constructor(credentials: string | (() => Promise<string>), baseURL?: string) {
+    this.baseURL = baseURL;
+    if (typeof credentials === "string") {
+      this.staticClient = new OpenAI({ apiKey: credentials, baseURL });
+    } else {
+      this.getToken = credentials;
+    }
   }
 
   async chat(options: ChatOptions): Promise<string> {
-    const response = await this.client.chat.completions.create({
+    let client: OpenAI;
+    if (this.staticClient) {
+      client = this.staticClient;
+    } else {
+      const token = await this.getToken!();
+      client = new OpenAI({ apiKey: token, baseURL: this.baseURL });
+    }
+
+    const response = await client.chat.completions.create({
       model: options.model,
       messages: options.messages,
       temperature: options.temperature,
@@ -17,9 +32,7 @@ export class OpenAICompatibleProvider implements Provider {
     });
 
     const content = response.choices[0]?.message?.content;
-    if (!content) {
-      throw new Error("No content in response");
-    }
+    if (!content) throw new Error("No content in response");
     return content;
   }
 }
