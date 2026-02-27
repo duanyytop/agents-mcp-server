@@ -1,4 +1,4 @@
-# agents-mcp-server
+# agents-review-mcp
 
 MCP server that lets Claude Code call multiple LLMs (OpenAI, Google Gemini, Kimi, MiniMax, GLM) for code review and general queries.
 
@@ -9,12 +9,12 @@ MCP server that lets Claude Code call multiple LLMs (OpenAI, Google Gemini, Kimi
 ```bash
 # Clone and build
 git clone <repo>
-cd agents-mcp-server
+cd agents-review-mcp
 pnpm install
 pnpm build
 
 # Add to Claude Code
-claude mcp add agents-mcp-server -s user -- node /path/to/agents-mcp-server/dist/index.js
+claude mcp add agents-review-mcp -s user -- node /path/to/agents-review-mcp/dist/index.js
 ```
 
 ## Authentication
@@ -30,9 +30,9 @@ For all providers except Gemini. There are two ways to set this up.
 
 > Update the GLM API key to xxx and use model glm-4
 
-Claude will call `add_api_key` automatically. The key is saved to `~/.config/agents-mcp-server/config.json`.
+Claude will call `add_api_key` automatically. The key is saved to `~/.config/agents-review-mcp/config.json`.
 
-**Via config.json directly** — edit `~/.config/agents-mcp-server/config.json` (create it if it doesn't exist):
+**Via config.json directly** — edit `~/.config/agents-review-mcp/config.json` (create it if it doesn't exist):
 
 ```json
 {
@@ -208,7 +208,7 @@ Then update the base URL in `src/providers/registry.ts` and rebuild.
 echo '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}' | node dist/index.js
 
 # Check config
-cat ~/.config/agents-mcp-server/config.json
+cat ~/.config/agents-review-mcp/config.json
 
 # Check Gemini CLI tokens
 cat ~/.gemini/oauth_creds.json

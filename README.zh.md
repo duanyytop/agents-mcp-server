@@ -1,4 +1,4 @@
-# agents-mcp-server
+# agents-review-mcp
 
 让 Claude Code 调用多个 LLM（OpenAI、Google Gemini、Kimi、MiniMax、GLM）进行代码 Review 和通用问答的 MCP server。
 
@@ -9,12 +9,12 @@
 ```bash
 # 克隆并构建
 git clone <repo>
-cd agents-mcp-server
+cd agents-review-mcp
 pnpm install
 pnpm build
 
 # 添加到 Claude Code
-claude mcp add agents-mcp-server -s user -- node /path/to/agents-mcp-server/dist/index.js
+claude mcp add agents-review-mcp -s user -- node /path/to/agents-review-mcp/dist/index.js
 ```
 
 ## 认证方式
@@ -30,9 +30,9 @@ claude mcp add agents-mcp-server -s user -- node /path/to/agents-mcp-server/dist
 
 > 更新 GLM 的 API key 为 xxx，模型用 glm-4
 
-Claude 会自动调用 `add_api_key`，key 保存至 `~/.config/agents-mcp-server/config.json`。
+Claude 会自动调用 `add_api_key`，key 保存至 `~/.config/agents-review-mcp/config.json`。
 
-**直接编辑 config.json** — 打开 `~/.config/agents-mcp-server/config.json`（不存在则新建）：
+**直接编辑 config.json** — 打开 `~/.config/agents-review-mcp/config.json`（不存在则新建）：
 
 ```json
 {
@@ -206,7 +206,7 @@ use add_api_key, provider=kimi, api_key=sk-xxx, model=moonshot-v1-8k
 echo '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}' | node dist/index.js
 
 # 查看配置
-cat ~/.config/agents-mcp-server/config.json
+cat ~/.config/agents-review-mcp/config.json
 
 # 查看 Gemini CLI token
 cat ~/.gemini/oauth_creds.json
